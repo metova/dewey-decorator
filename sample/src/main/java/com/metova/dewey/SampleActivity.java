@@ -2,8 +2,6 @@ package com.metova.dewey;
 
 import com.metova.deweydecoration.DeweyItemDecoration;
 
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,13 +18,10 @@ public class SampleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
 
-        Drawable d = getResources().getDrawable(R.drawable.inset_dewey_container);
-
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        DeweyItemDecoration decoration = new DeweyItemDecoration(this, d);
-        decoration.getTextPaint().setColor(Color.WHITE);
+        DeweyItemDecoration decoration = new DeweyItemDecoration(this, R.layout.dewey_item);
         recyclerView.addItemDecoration(decoration);
 
         recyclerView.setAdapter(new SampleAdapter(this, getDummyPersonData()));
