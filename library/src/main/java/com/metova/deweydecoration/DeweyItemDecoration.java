@@ -19,19 +19,16 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
 
     private final List<String> mDisplayedLabels = new ArrayList<>();
 
-    // TODO: Implement view recycling
-
     private View mView;
     private TextView mTextView;
 
     /**
-     * <p>Creates a new {@code DeweyItemDecoration} with the provided Drawable and TextPaint.</p>
-     *
      * <p>A decoration that will display a label for a unique group, as well as a sticky label for the currently
      * displayed group. A group is defined as a collection of items with a matching label. The decoration will be
-     * displayed on the first item within a group.</p>
+     * displayed on the first displayed item within a group.</p>
      *
-     * <p>To use, the {@code RecyclerView.Adapter} must implement {@link DeweyProvider}.</p>
+     * <p>To use, the {@code RecyclerView.Adapter} must implement {@link DeweyProvider}. The layout provided must also
+     * have a TextView with id {@code dd_text}. The label text will be placed in this TextView.</p>
      *
      * <p>The items in the Adapter must be sorted for this decoration to display correctly.</p>
      *
@@ -64,13 +61,11 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
         int position = parent.getChildAdapterPosition(child);
 
         DeweyProvider deweyProvider = (DeweyProvider) parent.getAdapter();
-        String labelText = deweyProvider.getDeweyLabelForPosition(position);
-        if (!mTextView.getText().equals(labelText)) {
-            mTextView.setText(labelText);
-        }
+        String topText = deweyProvider.getDeweyLabelForPosition(position);
 
-        mDisplayedLabels.add(labelText);
+        mDisplayedLabels.add(topText);
 
+        int left = parent.getWidth() - mView.getMeasuredWidth();
         int nextTop = Integer.MAX_VALUE;
         boolean nextTopSet = false;
         for (int i = 1; i < childCount; i++) {
@@ -83,12 +78,9 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
                 mDisplayedLabels.add(text);
                 int top = child.getTop();
                 if (top > 0) {
-                    View v = createView(parent);
-                    TextView textView = (TextView) v.findViewById(R.id.dd_text);
-                    textView.setText(text);
+                    mTextView.setText(text);
 
-                    int left = parent.getWidth() - v.getMeasuredWidth();
-                    drawView(c, v, left, top);
+                    drawView(c, mView, left, top);
 
                     if (!nextTopSet) {
                         nextTop = top;
@@ -98,12 +90,12 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
             }
         }
 
-        int left = parent.getWidth() - mView.getMeasuredWidth();
+        mTextView.setText(topText);
+
         int top = Math.min(0, nextTop - mView.getMeasuredHeight());
         drawView(c, mView, left, top);
     }
 
-    @SuppressWarnings("ResourceType")
     private View createView(RecyclerView parent) {
         FrameLayout container = (FrameLayout) mInflater.inflate(R.layout.dd_container, parent, false);
         mInflater.inflate(mLayoutResId, container);
