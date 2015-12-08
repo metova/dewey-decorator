@@ -24,7 +24,9 @@ public class SampleActivity extends AppCompatActivity {
         DeweyItemDecoration decoration = new DeweyItemDecoration(this, R.layout.dewey_item);
         recyclerView.addItemDecoration(decoration);
 
-        recyclerView.setAdapter(new SampleAdapter(this, getDummyPersonData()));
+        SampleAdapter adapter = new SampleAdapter(this, getDummyPersonData());
+        decoration.setProvider(adapter);
+        recyclerView.setAdapter(adapter);
     }
 
     private List<Person> getDummyPersonData() {

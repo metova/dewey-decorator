@@ -21,6 +21,7 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
 
     private View mView;
     private TextView mTextView;
+    private DeweyProvider mProvider;
 
     /**
      * <p>A decoration that will display a label for a unique group, as well as a sticky label for the currently
@@ -41,8 +42,8 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        if (!(parent.getAdapter() instanceof DeweyProvider)) {
-            throw new IllegalStateException("Adapter must implement DeweyProvider");
+        if (mProvider == null) {
+            throw new IllegalStateException("DeweyProvider must be set before the RecyclerView draws");
         }
 
         if (mView == null) {
@@ -60,8 +61,7 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
         View child = parent.getChildAt(0);
         int position = parent.getChildAdapterPosition(child);
 
-        DeweyProvider deweyProvider = (DeweyProvider) parent.getAdapter();
-        String topText = deweyProvider.getDeweyLabelForPosition(position);
+        String topText = mProvider.getDeweyLabelForPosition(position);
 
         mDisplayedLabels.add(topText);
 
@@ -72,8 +72,7 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
             child = parent.getChildAt(i);
             position = parent.getChildAdapterPosition(child);
 
-            deweyProvider = (DeweyProvider) parent.getAdapter();
-            String text = deweyProvider.getDeweyLabelForPosition(position);
+            String text = mProvider.getDeweyLabelForPosition(position);
             if (!mDisplayedLabels.contains(text)) {
                 mDisplayedLabels.add(text);
                 int top = child.getTop();
@@ -116,5 +115,9 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
         c.translate(left, top);
         v.draw(c);
         c.restore();
+    }
+
+    public void setProvider(DeweyProvider provider) {
+        mProvider = provider;
     }
 }
