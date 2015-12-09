@@ -1,13 +1,13 @@
 package com.metova.dewey;
 
+import com.metova.deweydecoration.DeweyProvider;
+
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.metova.deweydecoration.DeweyProvider;
 
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +40,7 @@ public class SampleAdapter extends RecyclerView.Adapter<SampleAdapter.SampleView
     }
 
     @Override
-    public String getDeweyLabelForPosition(int position) {
+    public CharSequence getDeweyLabelForPosition(int position) {
         Person person = mPersonList.get(position);
         return person.getLastName().substring(0, 1).toUpperCase(Locale.US);
     }

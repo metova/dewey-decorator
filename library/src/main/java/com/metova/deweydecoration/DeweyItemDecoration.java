@@ -17,7 +17,7 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
     private final LayoutInflater mInflater;
     private final int mLayoutResId;
 
-    private final List<String> mDisplayedLabels = new ArrayList<>();
+    private final List<CharSequence> mDisplayedLabels = new ArrayList<>();
 
     private View mView;
     private TextView mTextView;
@@ -49,6 +49,9 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
         if (mView == null) {
             mView = createView(parent);
             mTextView = (TextView) mView.findViewById(R.id.dd_text);
+            if (mTextView == null) {
+                throw new IllegalStateException("the layout must have a TextView with id 'dd_text'");
+            }
         }
 
         int childCount = parent.getChildCount();
@@ -61,8 +64,10 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
         View child = parent.getChildAt(0);
         int position = parent.getChildAdapterPosition(child);
 
-        String topText = mProvider.getDeweyLabelForPosition(position);
-
+        CharSequence topText = mProvider.getDeweyLabelForPosition(position);
+        if (topText == null) {
+            topText = "";
+        }
         mDisplayedLabels.add(topText);
 
         int left = parent.getWidth() - mView.getMeasuredWidth();
@@ -72,7 +77,11 @@ public class DeweyItemDecoration extends RecyclerView.ItemDecoration {
             child = parent.getChildAt(i);
             position = parent.getChildAdapterPosition(child);
 
-            String text = mProvider.getDeweyLabelForPosition(position);
+            CharSequence text = mProvider.getDeweyLabelForPosition(position);
+            if (text == null) {
+                text = "";
+            }
+
             if (!mDisplayedLabels.contains(text)) {
                 mDisplayedLabels.add(text);
                 int top = child.getTop();
